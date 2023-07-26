@@ -78,6 +78,9 @@ async function writeComment(body: string) {
   })
 }
 async function compare() {
+  console.log('start compare');
+  
+  core.debug('running')
   try {
     const defaultBranch = core.getInput('default-branch', {required: false})
     const fileList = core.getInput('files', {required: true})
@@ -94,9 +97,12 @@ async function compare() {
 
     let changes: TokenChange[] = []
 
+    core.debug(`Files: ${files}`)
     for (const file of files) {
       const mainTokens = await readDefaultFile(file, defaultBranch)
       const branchTokens = await readBranchFile(file)
+      core.debug(`comparing main: ${mainTokens}`)
+      core.debug(`comparing branch: ${branchTokens}`)
       const output = parseCompare(mainTokens, branchTokens)
       output.map((change: TokenChange) => {
         changes.push(change)
@@ -117,4 +123,5 @@ async function compare() {
   }
 }
 
+console.log('before compare')
 compare()
